@@ -96,6 +96,7 @@ midi_for_light.init = function(id) { // called when the MIDI device is opened & 
         engine.connectControl("[Channel" + (i + 1) + "]", "beat_active", "midi_for_light.deckBeatOutputToMidi");
         engine.connectControl("[Channel" + (i + 1) + "]", "volume", "midi_for_light.deckVolumeChange");
         engine.connectControl("[Channel" + (i + 1) + "]", "play", "midi_for_light.deckButtonPlay");
+        engine.connectControl("[Channel" + (i + 1) + "]", "ppqn_active", "midi_for_light.sendMidiClock");
         if (enable_mtc_timecode === true) engine.connectControl("[Channel" + (i + 1) + "]", "playposition", "midi_for_light.sendMidiMtcFullFrame");
     }
 
@@ -527,6 +528,9 @@ midi_for_light.deckBeatOutputToMidi = function(value, group, control) { // send 
         }
     }
 
+};
+
+midi_for_light.sendMidiClock = function(value, group, control) {
     if (enable_midi_clock === true)
     {
         if (value) { // probably getting called at wrong frequency for this to work here
