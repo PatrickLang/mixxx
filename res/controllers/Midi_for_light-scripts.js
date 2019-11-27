@@ -16,7 +16,8 @@ function midi_for_light() {}
 ///////////////////////////////////////////////////////////////
 //                       USER OPTIONS                        //
 ///////////////////////////////////////////////////////////////
-var midi_channel = 1; // set midi_channel. Valid range: 1 to 16.  
+var midi_channel = 1; // set midi_channel. Valid range: 1 to 16.
+var enable_midi_clock = true; // set to false if you don't need midi clock (midi 0xf8 sent at 24 ppqn)  
 var enable_beat = true; // set to false if you not need beat
 var enable_bpm = true; // set to false if you not need BPM
 var enable_mtc_timecode = false; // set to false if you not need midi time code
@@ -523,6 +524,14 @@ midi_for_light.deckBeatOutputToMidi = function(value, group, control) { // send 
                 midi.sendShortMsg(0x8F + midi_channel, 0x32, 0x0); // note D (50) on with value 0
                 midi.sendShortMsg(0x7F + midi_channel, 0x32, 0x0); // note D (59) off with value 0
             }
+        }
+    }
+
+    if (enable_midi_clock === true)
+    {
+        if (value) { // probably getting called at wrong frequency for this to work here
+            midi.sendShortMsg(0xF8, 0, 0);
+            // TODO - this doesn't send start 0xfa, stop 0xfc
         }
     }
 };

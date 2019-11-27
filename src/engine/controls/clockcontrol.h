@@ -27,6 +27,7 @@ class ClockControl: public EngineControl {
 
   private:
     ControlObject* m_pCOBeatActive;
+    ControlObject* m_pCOPpqnActive;
     ControlProxy* m_pCOSampleRate;
 
     // objects below are written from an engine worker thread
