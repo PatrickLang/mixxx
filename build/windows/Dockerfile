@@ -97,6 +97,7 @@ RUN pip install scons
 # get dependent libraries
 # TODO: different base URLs per release (2.2.x-windows vs 2.3.x-windows)
 ADD golden_environment c:\\mixxx\\golden_environment
+RUN mkdir c:\\mixxx\\winlib
 WORKDIR c:\\mixxx
 RUN $goldenEnvironment = (Get-Content c:\\mixxx\\golden_environment) \
          -replace 'PLATFORM', 'x64' \
@@ -104,6 +105,7 @@ RUN $goldenEnvironment = (Get-Content c:\\mixxx\\golden_environment) \
     $libUrl = 'https://downloads.mixxx.org/builds/buildserver/2.3.x-windows/{0}.zip' -f $goldenEnvironment ; \
     Write-Host 'Fetching ' $libUrl; \
     curl.exe -L $libUrl -o golden_environment.zip; \
-    Expand-Archive -Force golden_environment.zip
+    cd winlib; \
+    Expand-Archive -Force ..\\golden_environment.zip
 
 # TODO: clone mixxx sources, or map them in?
