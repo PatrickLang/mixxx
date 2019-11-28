@@ -2,7 +2,6 @@
 # for VS build tools: https://docs.microsoft.com/en-us/visualstudio/install/build-tools-container?view=vs-2019
 # for Python: https://github.com/docker-library/python/blob/master/2.7/windows/windowsservercore-1809/Dockerfile
 
-# escape=`
 
 # Use the latest Windows Server Core image with .NET Framework 4.8.
 FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2019
@@ -11,23 +10,23 @@ FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2019
 SHELL ["cmd", "/S", "/C"]
 
 # Download the Build Tools bootstrapper.
-ADD https://aka.ms/vs/16/release/vs_buildtools.exe C:\TEMP\vs_buildtools.exe
+ADD https://aka.ms/vs/16/release/vs_buildtools.exe C:\\TEMP\\vs_buildtools.exe
 
 # Install Build Tools excluding workloads and components with known issues.
-RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache `
-    --installPath C:\BuildTools `
-    --all `
-    --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 `
-    --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 `
-    --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 `
-    --remove Microsoft.VisualStudio.Component.Windows81SDK `
+RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache \
+    --installPath C:\BuildTools \
+    --all \
+    --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 \
+    --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 \
+    --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 \
+    --remove Microsoft.VisualStudio.Component.Windows81SDK \
  || IF "%ERRORLEVEL%"=="3010" EXIT 0
 
 # Start developer command prompt with any other commands specified.
 # ENTRYPOINT C:\BuildTools\Common7\Tools\VsDevCmd.bat &&
 
-# Default to PowerShell if no other command specified.
-CMD ["powershell.exe", "-NoLogo", "-ExecutionPolicy", "Bypass"]
+# Python install scripts expect PowerShell
+SHELL ["powershell.exe", "-NoLogo", "-ExecutionPolicy", "Bypass"]
 
 ENV PYTHON_VERSION 2.7.17
 ENV PYTHON_RELEASE 2.7.17
@@ -90,3 +89,21 @@ RUN Write-Host ('Downloading get-pip.py ({0}) ...' -f $env:PYTHON_GET_PIP_URL); 
 
 # install "virtualenv", since the vast majority of users of this image will want it
 RUN pip install --no-cache-dir virtualenv
+RUN pip install scons
+
+# TODO: install git
+
+
+# get dependent libraries
+# TODO: different base URLs per release (2.2.x-windows vs 2.3.x-windows)
+ADD golden_environment c:\\mixxx\\golden_environment
+WORKDIR c:\\mixxx
+RUN $goldenEnvironment = (Get-Content c:\\mixxx\\golden_environment) \
+         -replace 'PLATFORM', 'x64' \
+         -replace 'CONFIGURATION', 'release'; \
+    $libUrl = 'https://downloads.mixxx.org/builds/buildserver/2.3.x-windows/{0}.zip' -f $goldenEnvironment ; \
+    Write-Host 'Fetching ' $libUrl; \
+    curl.exe -L $libUrl -o golden_environment.zip; \
+    Expand-Archive -Force golden_environment.zip
+
+# TODO: clone mixxx sources, or map them in?
