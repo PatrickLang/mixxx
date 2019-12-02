@@ -5,6 +5,10 @@ del /q /f *.exe
 rmdir /s /q dist32
 rmdir /s /q dist64
 
+REM codepage not set, breaks scons
+chcp 65001
+SET VSCMD_DEBUG=2
+
 REM this can be either release or debug. For development you want to use debug
 set BUILD_TYPE=release
 
@@ -16,7 +20,7 @@ REM set this to the folder where you built the dependencies
 REM set WINLIB_PATH="**Enter Path to WINLIB_PATH**"    - commented out since set in container's machine registry hive
 SET BIN_DIR=%WINLIB_PATH%\bin
 REM make sure the Qt version matches the version in WINLIB_PATH.
-set QT_VERSION=5.11.2
+set QT_VERSION=5.12.0
 SET QTDIR=%WINLIB_PATH%\Qt-%QT_VERSION%
 
 if "%ARCHITECTURE%" == "i386" (
