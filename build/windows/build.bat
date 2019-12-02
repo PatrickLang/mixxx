@@ -10,7 +10,7 @@ set BUILD_TYPE=release
 
 REM This determines if you build a 32bit or 64bit version of mixxx. 
 REM 32bit = i386, 64bit = amd64
-set ARCHITECTURE=i386
+set ARCHITECTURE=amd64
 
 REM set this to the folder where you built the dependencies
 REM set WINLIB_PATH="**Enter Path to WINLIB_PATH**"    - commented out since set in container's machine registry hive
@@ -28,7 +28,7 @@ if "%ARCHITECTURE%" == "i386" (
 )
 
 REM Adjust to your environment
-call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %VCVARS_ARCH%
+call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\Common7\Tools\vsdevcmd.bat" %VCVARS_ARCH%
 
 rem /MP Use all CPU cores.
 rem /FS force synchronous PDB writes (prevents PDB corruption with /MP)
