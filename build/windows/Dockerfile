@@ -108,4 +108,5 @@ RUN $goldenEnvironment = (Get-Content c:\\mixxx\\golden_environment) \
     cd winlib; \
     Expand-Archive -Force ..\\golden_environment.zip
 
-# TODO: clone mixxx sources, or map them in?
+RUN [System.Environment]::SetEnvironmentVariable('WINLIB_PATH', "$((Get-ChildItem -Path .\\winlib\\golden_environment -Directory).FullName)", [System.EnvironmentVariableTarget]::Machine)
+WORKDIR c:\\mixxx\\src

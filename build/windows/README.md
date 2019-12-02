@@ -19,3 +19,16 @@ This is the fastest option as it can use process isolation and doesn't need extr
 Docker Desktop defaults to 2 cores, 1GB of RAM which isn't sufficient. `-m 2g` or higher is needed to give the container more memory.
 
 `docker build -m 4g -t mixxx-build -f Dockerfile .`
+
+
+## Starting build environment
+
+From the root of your repo, run this:
+
+```powershell
+.\build\windows\container-build.ps1
+```
+
+Once the container has started, do a build with `build\windows\build.bat`
+
+> TODO - still need some adjustments for build to pass
