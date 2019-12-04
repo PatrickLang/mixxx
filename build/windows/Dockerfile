@@ -19,6 +19,7 @@ ADD ${CHANNEL_URL} C:\\TEMP\\VisualStudio.chman
 RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache \
     --channelUri C:\TEMP\VisualStudio.chman \
     --installChannelUri C:\TEMP\VisualStudio.chman \
+	--channelId VisualStudio.15.Release \
     --installPath C:\BuildTools \
     --all \
 	--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended \
