@@ -16,7 +16,9 @@ ADD https://aka.ms/vs/16/release/vs_buildtools.exe C:\\TEMP\\vs_buildtools.exe
 RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache \
     --installPath C:\BuildTools \
     --all \
-	--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended \
+	--add Microsoft.VisualStudio.Workload.VCTools \
+	--add Microsoft.VisualStudio.Component.VC.v141.x86.x64 \
+	--includeRecommended \
     --remove Microsoft.VisualStudio.Component.Windows10SDK.10240 \
     --remove Microsoft.VisualStudio.Component.Windows10SDK.10586 \
     --remove Microsoft.VisualStudio.Component.Windows10SDK.14393 \
@@ -100,14 +102,14 @@ RUN pip install scons
 ADD golden_environment c:\\mixxx\\golden_environment
 RUN mkdir c:\\mixxx\\winlib
 WORKDIR c:\\mixxx
-RUN $goldenEnvironment = (Get-Content c:\\mixxx\\golden_environment) \
-         -replace 'PLATFORM', 'x64' \
-         -replace 'CONFIGURATION', 'release'; \
-    $libUrl = 'https://downloads.mixxx.org/builds/buildserver/2.3.x-windows/{0}.zip' -f $goldenEnvironment ; \
-    Write-Host 'Fetching ' $libUrl; \
-    curl.exe -L $libUrl -o golden_environment.zip; \
-    cd winlib; \
-    Expand-Archive -Force ..\\golden_environment.zip
+# RUN $goldenEnvironment = (Get-Content c:\\mixxx\\golden_environment) \
+#          -replace 'PLATFORM', 'x64' \
+#          -replace 'CONFIGURATION', 'release'; \
+#     $libUrl = 'https://downloads.mixxx.org/builds/buildserver/2.3.x-windows/{0}.zip' -f $goldenEnvironment ; \
+#     Write-Host 'Fetching ' $libUrl; \
+#     curl.exe -L $libUrl -o golden_environment.zip; \
+#     cd winlib; \
+#     Expand-Archive -Force ..\\golden_environment.zip
 
 RUN [System.Environment]::SetEnvironmentVariable('WINLIB_PATH', "$((Get-ChildItem -Path .\\winlib\\golden_environment -Directory).FullName)", [System.EnvironmentVariableTarget]::Machine)
 WORKDIR c:\\mixxx\\src
