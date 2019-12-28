@@ -1,5 +1,5 @@
 @ECHO OFF
-SETLOCAL
+SETLOCAL EnableDelayedExpansion
 
 REM Base URL to download winlibs from.
 SET BASEURL=%1
@@ -39,18 +39,28 @@ IF NOT EXIST "%WINLIBS_PATH%\%WINLIB_NAME%" (
   echo Installing winlib %WINLIB_NAME%.
   CD "%WINLIBS_PATH%"
   echo ..Downloading %WINLIB_NAME%.zip
-  curl -fsS -L -o %WINLIB_NAME%.zip %BASEURL%/%WINLIB_NAME%.zip
+  if not exist %WINLIB_NAME%.zip (
+    where /q curl
+    IF ERRORLEVEL 1 (
+      echo curl not found. Please download %WINLIB_NAME%.zip from %BASEURL%/ and save it in %WINLIBS_PATH%, then try again
+      ENDLOCAL && EXIT /b 1
+    )
+    curl -fsS -L -o %WINLIB_NAME%.zip %BASEURL%/%WINLIB_NAME%.zip
+    set CLEANUPZIP=1
+  )
   IF ERRORLEVEL 1 ENDLOCAL && EXIT /b 1
   REM TODO(XXX) check fingerprint on zip file.
   echo ..unzipping %WINLIB_NAME%.zip
-  IF "%POWERSHELL%" == "powershell" (
+  IF "!POWERSHELL!" == "powershell" (
     powershell -Command "& {Expand-Archive \"%WINLIBS_PATH%/%WINLIB_NAME%.zip\" \"%WINLIBS_PATH%\\\"}"
     IF ERRORLEVEL 1 ENDLOCAL && EXIT /b 1
   ) ELSE (
-    %ZIP% x %WINLIB_NAME%.zip
+    !ZIP! x %WINLIB_NAME%.zip
     IF ERRORLEVEL 1 ENDLOCAL && EXIT /b 1
   )
-  DEL %WINLIB_NAME%.zip
+  IF "!CLEANUPZIP!" == "1" (
+    DEL %WINLIB_NAME%.zip
+  )
 ) else (
   echo %WINLIB_NAME% already exists at %WINLIBS_PATH%
   REM TODO(XXX) check fingerprint on build environment?
